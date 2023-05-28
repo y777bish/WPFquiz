@@ -1,11 +1,21 @@
-﻿using System;
+using System;
 using System.Windows.Input;
 
 namespace QuizOstateczny.ViewModel
 {
     class RelayCommand : ICommand
     {
-        public event EventHandler? CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged
+        {
+            add
+            {
+                if (canExecute != null) CommandManager.RequerySuggested += value;
+            }
+            remove
+            {
+                if (canExecute != null) CommandManager.RequerySuggested -= value;
+            }
+        }
 
         private Action<object> execute;
         private Predicate<object> canExecute;
@@ -18,12 +28,12 @@ namespace QuizOstateczny.ViewModel
 
         public bool CanExecute(object? parameter)
         {
-            throw new NotImplementedException();
+            return canExecute == null ? true : canExecute(parameter);
         }
 
         public void Execute(object? parameter)
         {
-            throw new NotImplementedException();
+            execute(parameter);
         }
     }
 }
